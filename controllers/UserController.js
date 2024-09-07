@@ -115,7 +115,7 @@ class UserController{
           await user.save();
           return sendResponse(res,SUCCESS_CODE,true,MESSAGES.PROFILE_UPDATE_SUCCESS,{user:user} );
         }catch(error){
-            next(error);
+            next(error); // Pass error to centralized error handler
         }
     }
 }
