@@ -13,7 +13,7 @@ import validateToken from '../middlewares/authMiddleware.js';
 //token verification middleware
 router.use('/changepassword',validateToken);
 router.use('/loggedInUser',validateToken);
-
+router.use('/editUserProfile',validateToken);
 
 /**
  * @swagger
@@ -104,6 +104,6 @@ router.post('/changepassword',UserController.changePassword);
  *         description: Unauthorized
  */
 router.get('/loggedInUser',UserController.loggedInUser);
-
+router.post('/editUserProfile',UserController.editUserProfile);
 
 export default router;

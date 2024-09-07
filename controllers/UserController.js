@@ -101,7 +101,19 @@ class UserController{
     }
     static editUserProfile = async(req,res) =>{
         try{
-            console.log("Hello World");
+          const {fullname,email,gender,dateOfBirth} = req.body;
+          const userId = req.user;
+          const user = await UserModel.findById(userId);
+          if (!user) {
+            return next(new HandleCustomError(MESSAGES.USER_NOT_FOUND, ERROR_CODE));
+          }
+          user.fullname = fullname || user.fullname;
+          user.email = email || user.email;
+          user.gender = gender || user.gender;
+          user.dateOfBirth = dateOfBirth || user.dateOfBirth;
+
+          await user.save();
+          return sendResponse(res,SUCCESS_CODE,true,MESSAGES.PROFILE_UPDATE_SUCCESS,{user:user} );
         }catch(error){
             next(error);
         }

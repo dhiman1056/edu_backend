@@ -12,5 +12,6 @@ export const MESSAGES = {
     PASSWORD_UPDATE_SUCCESS: "Password updated successfully.",
     PASSWORD_UPDATE_ERROR: "An error occurred while changing the password",
     USER_REGISTER_SUCCESS: "Registered successfully",
-    USERNAME_EXISTS : "Username already exists"
+    USERNAME_EXISTS : "Username already exists",
+    PROFILE_UPDATE_SUCCESS :"Profile updated successfully"
 };
