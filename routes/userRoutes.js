@@ -14,6 +14,7 @@ import validateToken from '../middlewares/authMiddleware.js';
 router.use('/changepassword',validateToken);
 router.use('/loggedInUser',validateToken);
 router.use('/editUserProfile',validateToken);
+router.use("/deleteUserProfile",validateToken);
 
 /**
  * @swagger
@@ -104,7 +105,7 @@ router.post('/changepassword',UserController.changePassword);
  *         description: Unauthorized
  */
 router.get('/loggedInUser',UserController.loggedInUser);
-router.post('/editUserProfile',UserController.editUserProfile);
 router.post('/updateUserProfile',UserController.updateUserProfile);
+router.post('/deleteUserProfile',UserController.deleteUserProfile);
 
 export default router;

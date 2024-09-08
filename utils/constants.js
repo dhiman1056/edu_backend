@@ -11,6 +11,7 @@ export const RESPONSE_CODE = {
   UNPROCESSABLE_ENTITY: 422,
   NOT_ACCEPTABLE:406,
   NOT_FOUND:404,
+  BAD_REQUEST:400,
 
   // Server Error
   INTERNAL_SERVER_ERROR: 500,
@@ -29,4 +30,10 @@ export const MESSAGES = {
   USER_REGISTER_SUCCESS: "Registered successfully",
   USERNAME_EXISTS: "Username already exists",
   PROFILE_UPDATE_SUCCESS: "Profile updated successfully",
+  OLD_PASSWORD_INCORRECT:"Old password is incorrect",
+  PROFILE_DELETE_SUCCESS:"Profile deleted successfully",
+  INACTIVE_USER_ERROR:"Profile is not active",
+  ORG_REGISTER_SUCCESS:"Organization registered successfully",
+  ORGANIZATION_NOT_FOUND:"No Organization found",
+  ORGANIZATION_FOUND:"Organization found successfully"
 };

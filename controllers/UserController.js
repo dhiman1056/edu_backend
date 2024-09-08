@@ -79,6 +79,14 @@ class UserController {
           new HandleCustomError(MESSAGES.USER_NOT_REGISTERED, ERROR_CODE)
         );
       }
+      if(user.isDeleted){
+        return next(
+          new HandleCustomError(
+            MESSAGES.INACTIVE_USER_ERROR,
+            RESPONSE_CODE.NOT_FOUND
+          )
+        );
+      }
       const isPasswordMatch = await bcrypt.compare(password, user.password);
       if (!isPasswordMatch) {
         return next(
@@ -101,8 +109,8 @@ class UserController {
   };
   static changePassword = async (req, res, next) => {
     try {
-      const { password, password_confirmation } = req.body;
-      if (!password || !password_confirmation) {
+      const {old_password, password, password_confirmation } = req.body;
+      if (!old_password || !password || !password_confirmation) {
         return next(
           new HandleCustomError(MESSAGES.REQUIRED_FIELDS, ERROR_CODE)
         );
@@ -110,6 +118,14 @@ class UserController {
       if (password !== password_confirmation) {
         return next(
           new HandleCustomError(MESSAGES.PASSWORD_MISMATCH, ERROR_CODE)
+        );
+      }
+      //match old password with db password
+      const user = await UserModel.findById(req.user);
+      const isMatch = await bcrypt.compare(old_password, user.password);
+      if (!isMatch) {
+        return next(
+          new HandleCustomError(MESSAGES.OLD_PASSWORD_INCORRECT, RESPONSE_CODE.NOT_ACCEPTABLE)
         );
       }
       // Generate salt and hash the password
@@ -150,7 +166,24 @@ class UserController {
       next(error);
     }
   };
-  static editUserProfile = async (req, res) => {};
+  static deleteUserProfile = async (req, res) => {
+    const userId = req.user;
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return next(
+        new HandleCustomError(
+          MESSAGES.USER_NOT_FOUND,
+          RESPONSE_CODE.NOT_FOUND
+        )
+      );
+    }
+    await UserModel.findByIdAndUpdate(userId, {$set: { isDeleted: true, deletedAt: new Date()}})
+    return sendResponse(
+      res,
+      RESPONSE_CODE.OK,
+      MESSAGES.PROFILE_DELETE_SUCCESS
+    );
+  };
 
   static updateUserProfile = async (req, res, next) => {
     try {

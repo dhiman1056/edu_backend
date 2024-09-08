@@ -59,7 +59,10 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-  }
+  },
+  isDeleted: { type: Boolean, default: false }, // Field for soft delete
+  deletedAt: { type: Date }, // Optional: Store the deletion timestamp
+  organizations :  [{ type: mongoose.Schema.Types.ObjectId, ref: 'organization' }]
 });
 
 const UserModel = mongoose.model("user", userSchema);
