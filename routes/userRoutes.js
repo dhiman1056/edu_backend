@@ -17,7 +17,7 @@ router.use('/editUserProfile',validateToken);
 
 /**
  * @swagger
- * /api/user/register:
+ * /api/user/signup:
  *   post:
  *     summary: Register a new user
  *     tags: [Users]
@@ -43,7 +43,7 @@ router.use('/editUserProfile',validateToken);
  */
 
 //Public routes
-router.post('/register',UserController.userRegistration);
+router.post('/signup',UserController.userRegistration); // endpoint change by
 
 /**
  * @swagger
@@ -105,5 +105,6 @@ router.post('/changepassword',UserController.changePassword);
  */
 router.get('/loggedInUser',UserController.loggedInUser);
 router.post('/editUserProfile',UserController.editUserProfile);
+router.post('/updateUserProfile',UserController.updateUserProfile);
 
 export default router;

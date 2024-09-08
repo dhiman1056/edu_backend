@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
     }
   },
   tc: { type: Boolean, required: true },
-  avatar: { type: String, default: '' },
+  avatar: { type: String, default: null }, // changed '' to null
   role: {
     type: String,
     default: "user",
