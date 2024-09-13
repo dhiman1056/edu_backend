@@ -102,26 +102,5 @@ class UserController {
       next(error); // Pass error to centralized error handler
     }
   };
-  static loggedInUser = async (req, res, next) => {
-    try {
-      const user = await UserModel.findById(req.user).select(
-        "-password -gender -dateOfBirth -tc -role -createdAt"
-      );
-      if (!user) {
-        return next(
-          new HandleCustomError(
-            MESSAGES.USER_NOT_FOUND,
-            RESPONSE_CODE.UNAUTHORIZED
-          )
-        );
-      }
-      return sendResponse(res, RESPONSE_CODE.OK, null, {
-        user,
-      });
-      //  return res.send({ user: user });
-    } catch (error) {
-      next(error);
-    }
-  };
 }
 export default UserController;

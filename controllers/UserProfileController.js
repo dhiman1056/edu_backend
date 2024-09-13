@@ -51,6 +51,26 @@ class userProfileController {
     });
     return sendResponse(res, RESPONSE_CODE.OK, MESSAGES.PROFILE_DELETE_SUCCESS);
   };
+  static getUserProfile = async(req,res,next) =>{
+    try{
+      const user = await UserModel.findById(req.user).select(
+        "-password -gender -dateOfBirth -tc -role -createdAt"
+      );
+      if (!user) {
+        return next(
+          new HandleCustomError(
+            MESSAGES.USER_NOT_FOUND,
+            RESPONSE_CODE.UNAUTHORIZED
+          )
+        );
+      }
+      return sendResponse(res, RESPONSE_CODE.OK, null, {
+        user,
+      });
+    }catch(error){
+      next(error); // Pass error to centralized error handler
+    }
+  }
 }
 
 export default userProfileController;

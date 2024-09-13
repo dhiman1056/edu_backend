@@ -6,8 +6,10 @@ import validateToken from '../middlewares/authMiddleware.js';
 //token verification middleware
 router.use('/updateUserProfile',validateToken);
 router.use("/deleteUserProfile",validateToken);
+router.use("/getUserProfile",validateToken);
 
 router.post('/updateUserProfile',userProfileController.updateUserProfile);
 router.post('/deleteUserProfile',userProfileController.deleteUserProfile);
+router.get('/getUserProfile',userProfileController.getUserProfile);
 
 export default router;
