@@ -10,33 +10,12 @@ import {
 } from "../utils/constants.js";
 import generateToken from "../utils/jwtUtils.js";
 import { sendResponse } from "../utils/responseHelper.js";
+import { validateNestedFields } from "../utils/validation.js";
 
 class UserController {
   //static means no object required to access userRegistration
   static userRegistration = async (req, res, next) => {
     const { fullname, username, email, password, tc } = req.body;
-    if (!fullname || !username || !email || !password || !tc) {
-      return next(
-        new HandleCustomError(
-          MESSAGES.REQUIRED_FIELDS,
-          RESPONSE_CODE.NOT_ACCEPTABLE
-        )
-      );
-    }
-
-    const existingUser = await UserModel.findOne({
-      $or: [{ email: email }, { username: username }],
-    });
-    if (existingUser) {
-      if (existingUser.email === email) {
-        return next(new HandleCustomError(MESSAGES.EMAIL_EXISTS, ERROR_CODE));
-      }
-      if (existingUser.username === username) {
-        return next(
-          new HandleCustomError(MESSAGES.USERNAME_EXISTS, ERROR_CODE)
-        );
-      }
-    }
     try {
       const salt = await bcrypt.genSalt(10);
       const secPass = await bcrypt.hash(password, salt);
@@ -54,7 +33,6 @@ class UserController {
         MESSAGES.USER_REGISTER_SUCCESS
       );
     } catch (error) {
-      console.log(error);
       next(error); // Pass error to centralized error handler
     }
   };
@@ -62,21 +40,12 @@ class UserController {
   static userLogin = async (req, res, next) => {
     try {
       const { email, password } = req.body;
-      if (!email || !password) {
-        return next(
-          new HandleCustomError(MESSAGES.REQUIRED_FIELDS, ERROR_CODE)
-        );
-      }
-      logger.info("Email and password id", {
-        email: email,
-        password: password,
-      });
       const user = await UserModel.findOne({
         $or: [{ email: email }, { username: email }],
       });
       if (user == null) {
         return next(
-          new HandleCustomError(MESSAGES.USER_NOT_REGISTERED, ERROR_CODE)
+          new HandleCustomError(MESSAGES.USER_NOT_REGISTERED, RESPONSE_CODE.BAD_REQUEST)
         );
       }
       if(user.isDeleted){
@@ -90,7 +59,7 @@ class UserController {
       const isPasswordMatch = await bcrypt.compare(password, user.password);
       if (!isPasswordMatch) {
         return next(
-          new HandleCustomError(MESSAGES.INVALID_CREDENTIALS, ERROR_CODE)
+          new HandleCustomError(MESSAGES.INVALID_CREDENTIALS, RESPONSE_CODE.BAD_REQUEST)
         );
       }
       const token = generateToken({ userId: user._id });
@@ -103,23 +72,12 @@ class UserController {
         user: userDate,
       });
     } catch (error) {
-      logger.error("Error in user login api", { error: error });
       next(error); // Pass error to centralized error handler
     }
   };
   static changePassword = async (req, res, next) => {
     try {
       const {old_password, password, password_confirmation } = req.body;
-      if (!old_password || !password || !password_confirmation) {
-        return next(
-          new HandleCustomError(MESSAGES.REQUIRED_FIELDS, ERROR_CODE)
-        );
-      }
-      if (password !== password_confirmation) {
-        return next(
-          new HandleCustomError(MESSAGES.PASSWORD_MISMATCH, ERROR_CODE)
-        );
-      }
       //match old password with db password
       const user = await UserModel.findById(req.user);
       const isMatch = await bcrypt.compare(old_password, user.password);
@@ -141,7 +99,6 @@ class UserController {
         MESSAGES.PASSWORD_UPDATE_SUCCESS
       );
     } catch (error) {
-      logger.error("Error changing password:", { error: error });
       next(error); // Pass error to centralized error handler
     }
   };
@@ -164,56 +121,6 @@ class UserController {
       //  return res.send({ user: user });
     } catch (error) {
       next(error);
-    }
-  };
-  static deleteUserProfile = async (req, res) => {
-    const userId = req.user;
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      return next(
-        new HandleCustomError(
-          MESSAGES.USER_NOT_FOUND,
-          RESPONSE_CODE.NOT_FOUND
-        )
-      );
-    }
-    await UserModel.findByIdAndUpdate(userId, {$set: { isDeleted: true, deletedAt: new Date()}})
-    return sendResponse(
-      res,
-      RESPONSE_CODE.OK,
-      MESSAGES.PROFILE_DELETE_SUCCESS
-    );
-  };
-
-  static updateUserProfile = async (req, res, next) => {
-    try {
-      const { fullname, email, gender, dateOfBirth } = req.body;
-      const userId = req.user;
-      const user = await UserModel.findById(userId);
-      if (!user) {
-        return next(
-          new HandleCustomError(
-            MESSAGES.USER_NOT_FOUND,
-            RESPONSE_CODE.NOT_FOUND
-          )
-        );
-      }
-      user.fullname = fullname || user.fullname;
-      user.email = email || user.email;
-      user.gender = gender || user.gender;
-      user.dateOfBirth = dateOfBirth || user.dateOfBirth;
-
-      await user.save();
-      return sendResponse(
-        res,
-        RESPONSE_CODE.OK,
-        MESSAGES.PROFILE_UPDATE_SUCCESS,
-        {
-          user: user,
-        }
-      );
-    } catch (error) {
-      next(error); // Pass error to centralized error handler
     }
   };
 }

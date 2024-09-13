@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
-import validateUsername from '../utils/helper.js';
+import {validateUsername} from '../utils/validation.js';
 
 const userSchema = new mongoose.Schema({
   fullname: {
     type: String,
     required: [true, "Please enter your full name"],
     trim: true,
+    maxlength: [30, "Fullname must be at most 30 characters long"]
   },
   username: {
     type: String,
@@ -23,7 +24,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please enter your email"],
     unique: true,
-    match: /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+    match: [ /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/, "Invalid email format"], // Custom message for invalid email format
     trim: true,
   },
   password: {

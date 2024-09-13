@@ -11,12 +11,27 @@ const errorHandler = (err, req, res, next) => {
     });
 
     // Determine error status code (default to 500 if not specified)
-    const statusCode = err.status || 500;
+    const statusCode = err.statusCode || 500;
+
+    // Check if the error message is an object (for custom validation errors)
+    let responseMessage;
+    if (typeof err.message === 'string') {
+        try {
+            responseMessage = JSON.parse(err.message); // Try to parse the message as JSON
+        } catch {
+            responseMessage = err.message; // Fallback to plain string if parsing fails
+        }
+    } else if (typeof err.message === 'object') {
+        responseMessage = err.message; // Directly use the object if it's already an object
+    } else {
+        responseMessage = 'Internal Server Error'; // Default message
+    }
 
     // Send a JSON response to the client
     res.status(statusCode).json({
         success: false,
-        message: err.message || 'Internal Server Error',
+        ...(typeof responseMessage === 'object' ? responseMessage : { message: responseMessage }), // Spread the object if it's a validation error, otherwise use the string message
     });
-}
+};
+
 export default errorHandler;
