@@ -19,19 +19,18 @@ const errorHandler = (err, req, res, next) => {
         try {
             responseMessage = JSON.parse(err.message); // Try to parse the message as JSON
         } catch {
-            responseMessage = err.message; // Fallback to plain string if parsing fails
+            responseMessage = {msg:err.message}; // Fallback to plain string if parsing fails
         }
     } else if (typeof err.message === 'object') {
-        responseMessage = err.message; // Directly use the object if it's already an object
+        responseMessage = { msg: err.message }; // Directly use the object if it's already an object
     } else {
-        responseMessage = 'Internal Server Error'; // Default message
+        responseMessage =  { msg: 'Internal Server Error' }; // Default message
     }
 
     // Send a JSON response to the client
     res.status(statusCode).json({
-        success: false,
-        ...(typeof responseMessage === 'object' ? responseMessage : { message: responseMessage }), // Spread the object if it's a validation error, otherwise use the string message
+        statusCode: statusCode,
+        ...responseMessage
     });
 };
-
 export default errorHandler;

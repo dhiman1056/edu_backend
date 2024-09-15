@@ -35,5 +35,13 @@ export const MESSAGES = {
   INACTIVE_USER_ERROR:"Profile is not active",
   ORG_REGISTER_SUCCESS:"Organization registered successfully",
   ORGANIZATION_NOT_FOUND:"No Organization found",
-  ORGANIZATION_FOUND:"Organization found successfully"
+  ORGANIZATION_FOUND:"Organization found successfully",
+  PRODUCT_CREATED_SUCCESS : "New product created successfully",
+  PRODUCT_FETCH_SUCCESS:"Products fetched successfully",
+  CART_ADD_SUCCESS : "Added successfully",
+  CART_REMOVE_SUCCESS:"Removed successfully",
+  CART_GET_SUCCESS:"Cart fetched successfully",
+  PRODUCT_NOT_FOUND:"Product not found",
+  CART_NOT_FOUND:"Cart not found",
+  CART_EMPTY_SUCCESS:"Cart empty success"
 };

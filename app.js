@@ -5,6 +5,9 @@ import connectDB from './configs/connectdb.js';
 import userRoutes from './routes/userRoutes.js';
 import orgRoutes from './routes/orgRoutes.js';
 import userProfileRoutes from './routes/userProfileRoutes.js';
+import productRoutes from './routes/productRoutes.js';
+import productCartRoutes from './routes/cartRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 
 import { swaggerDocs, swaggerUi } from './configs/swagger.js';
 import errorHandler from './errorhandlers/errorHandler.js';
@@ -28,7 +31,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/api/user",userRoutes);
 app.use("/api/org",orgRoutes);
-app.use("/api/userProfile",userProfileRoutes)
+app.use("/api/userProfile",userProfileRoutes);
+app.use("/api/products",productRoutes);
+app.use('/api/cart',productCartRoutes);
+app.use('/api/order',orderRoutes);
 
 // Place the error handler after all other middleware and routes
 app.use(errorHandler);
