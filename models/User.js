@@ -73,6 +73,10 @@ const userSchema = new mongoose.Schema({
   // }]
 });
 
+
 const UserModel = mongoose.model("user", userSchema);
+
+// Ensure indexes (creates unique index if it doesn't exist)
+// UserModel.ensureIndexes();
 
 export default UserModel;

@@ -21,7 +21,7 @@ const OrganizationSchema = new mongoose.Schema({
     }, // Enum for organization type
     orgCategory: {
       type: String,
-      enum: ["Public", "Private", "Government"],
+      enum: ["SemiGovt", "Private", "Government"],
       required: [true, "Organization category is required"],
     }, // Enum for organization category
     briefDescription: {
@@ -77,7 +77,7 @@ const OrganizationSchema = new mongoose.Schema({
     username: {
       type: String,
       required: [true, "Admin username is required"],
-      unique: true,
+      // unique: true,
       trim: true,
       minlength: [1, "Username must be at least 1 character long"],
       maxlength: [30, "Username must be at most 30 characters long"],
@@ -87,16 +87,16 @@ const OrganizationSchema = new mongoose.Schema({
           "Username can only contain letters, numbers, underscores, periods (no consecutive periods or ending with a period), and must be 1-30 characters long",
       },
     },
-    email: { 
-      type: String, 
-      required: [true,"Admin email is required"], 
-      unique: true, 
+    email: {
+      type: String,
+      required: [true,"Admin email is required"],
+      unique: true,
       match: [ /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/, "Invalid email format"], // Custom message for invalid email format
       trim: true,
     },
-    phone: { 
-      type: String, 
-      required: [true,"Admin phone number is required"] 
+    phone: {
+      type: String,
+      required: [true,"Admin phone number is required"]
     },
   },
   createdBy: {

@@ -3,9 +3,8 @@ const router = express.Router();
 import OrgController from '../controllers/OrgController.js';
 import validateToken from '../middlewares/authMiddleware.js';
 
-//token middleware
-router.use('/createOrganization',validateToken);
-router.use('/getOrganization',validateToken);
+// Apply middleware to all routes
+router.use(validateToken);
 
 router.post('/createOrganization',OrgController.createOrganization);
 router.get('/getOrganization',OrgController.getOrganization);

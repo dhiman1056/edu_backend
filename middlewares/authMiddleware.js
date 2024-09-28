@@ -1,4 +1,7 @@
 import jwt from "jsonwebtoken";
+import {
+  RESPONSE_CODE,
+} from "../utils/constants.js";
 
 const validateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -7,17 +10,16 @@ const validateToken = (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
       req.user = decoded.userId;
-      console.log(req.user);
       next();
     } catch (err) {
       return res
-        .status(401)
-        .json({ success: false, message: "Invalid token." });
+        .status(RESPONSE_CODE.UNAUTHORIZED)
+        .json({ statusCode: false, msg: "Invalid token." });
     }
   } else {
     res
-      .status(401)
-      .json({ success: false, message: "Authorization token is required." });
+      .status(RESPONSE_CODE.UNAUTHORIZED)
+      .json({ statusCode: false, msg: "Authorization token is required." });
   }
 };
 

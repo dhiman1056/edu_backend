@@ -12,7 +12,7 @@ class HandleCustomError extends Error {
       this.statusCode = statusCode;
       this.isCustom = true; // You can use this to identify your custom errors
     }
-  
+
     toJSON() {
       if (this.isCustom && typeof this.message === 'string') {
         try {
@@ -25,7 +25,5 @@ class HandleCustomError extends Error {
       return { message: this.message };
     }
   }
-  
+
 export default HandleCustomError;
-
-

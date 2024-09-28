@@ -7,10 +7,11 @@ import {
 } from "../utils/constants.js";
 import { sendResponse } from "../utils/responseHelper.js";
 import UserModel from "../models/User.js";
+
 class OrgController {
   static createOrganization = async (req, res,next) => {
     try {
-      const userId  = req.user;  
+      const userId  = req.user;
       const user = await UserModel.findById(userId);
       if (!user) {
         return next(
@@ -47,7 +48,15 @@ class OrgController {
         MESSAGES.ORG_REGISTER_SUCCESS
       )
     } catch (error) {
-      console.log(error);
+      if (error.name === "ValidationError" || error.code === 11000) {
+        // Handle Mongoose validation errors
+        return res.status(RESPONSE_CODE.UNPROCESSABLE_ENTITY).json({
+          error: error.message,
+          msg: error._message,
+          error_code: error.code,
+        });
+      }
+
       next(error);
     }
   };

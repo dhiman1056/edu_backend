@@ -26,13 +26,11 @@ class userProfileController {
       user.dateOfBirth = dateOfBirth || user.dateOfBirth;
 
       await user.save();
+
       return sendResponse(
         res,
         RESPONSE_CODE.OK,
-        MESSAGES.PROFILE_UPDATE_SUCCESS,
-        {
-          user: user,
-        }
+        MESSAGES.PROFILE_UPDATE_SUCCESS
       );
     } catch (error) {
       next(error); // Pass error to centralized error handler

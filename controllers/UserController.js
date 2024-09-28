@@ -1,16 +1,9 @@
 import bcrypt from "bcrypt";
-import logger from "../configs/logger.js";
 import HandleCustomError from "../errorhandlers/handleCustomError.js";
 import UserModel from "../models/User.js";
-import {
-  ERROR_CODE,
-  MESSAGES,
-  RESPONSE_CODE,
-  SUCCESS_CODE,
-} from "../utils/constants.js";
+import { MESSAGES, RESPONSE_CODE, SUCCESS_CODE } from "../utils/constants.js";
 import generateToken from "../utils/jwtUtils.js";
 import { sendResponse } from "../utils/responseHelper.js";
-import { validateNestedFields } from "../utils/validation.js";
 
 class UserController {
   //static means no object required to access userRegistration
@@ -33,6 +26,38 @@ class UserController {
         MESSAGES.USER_REGISTER_SUCCESS
       );
     } catch (error) {
+      if (error.name === "ValidationError" || error.code === 11000) {
+        // Handle Mongoose validation errors
+        return res.status(RESPONSE_CODE.UNPROCESSABLE_ENTITY).json({
+          error: error.message,
+          msg: error._message,
+          error_code: error.code,
+        });
+      }
+
+      // Pass other errors to centralized error handler
+      next(error);
+    }
+  };
+
+  static authCheck = async (req, res, next) => {
+    try {
+      const user = await UserModel.findById(req.user).select(
+        "-password -gender -dateOfBirth -tc -role -createdAt"
+      );
+
+      if (!user) {
+        return next(
+          new HandleCustomError(
+            MESSAGES.UNAUTHORIZED,
+            RESPONSE_CODE.UNAUTHORIZED
+          )
+        );
+      }
+      return sendResponse(res, RESPONSE_CODE.OK, null, {
+        user,
+      });
+    } catch (error) {
       next(error); // Pass error to centralized error handler
     }
   };
@@ -43,12 +68,16 @@ class UserController {
       const user = await UserModel.findOne({
         $or: [{ email: email }, { username: email }],
       });
+
       if (user == null) {
         return next(
-          new HandleCustomError(MESSAGES.USER_NOT_REGISTERED, RESPONSE_CODE.BAD_REQUEST)
+          new HandleCustomError(
+            MESSAGES.USER_NOT_REGISTERED,
+            RESPONSE_CODE.BAD_REQUEST
+          )
         );
       }
-      if(user.isDeleted){
+      if (user.isDeleted) {
         return next(
           new HandleCustomError(
             MESSAGES.INACTIVE_USER_ERROR,
@@ -59,7 +88,10 @@ class UserController {
       const isPasswordMatch = await bcrypt.compare(password, user.password);
       if (!isPasswordMatch) {
         return next(
-          new HandleCustomError(MESSAGES.INVALID_CREDENTIALS, RESPONSE_CODE.BAD_REQUEST)
+          new HandleCustomError(
+            MESSAGES.INVALID_CREDENTIALS,
+            RESPONSE_CODE.BAD_REQUEST
+          )
         );
       }
       const token = generateToken({ userId: user._id });
@@ -77,13 +109,17 @@ class UserController {
   };
   static changePassword = async (req, res, next) => {
     try {
-      const {old_password, password, password_confirmation } = req.body;
+      const { oldpassword, password } = req.body;
       //match old password with db password
       const user = await UserModel.findById(req.user);
-      const isMatch = await bcrypt.compare(old_password, user.password);
+      const isMatch = await bcrypt.compare(oldpassword, user.password);
+
       if (!isMatch) {
         return next(
-          new HandleCustomError(MESSAGES.OLD_PASSWORD_INCORRECT, RESPONSE_CODE.NOT_ACCEPTABLE)
+          new HandleCustomError(
+            MESSAGES.OLD_PASSWORD_INCORRECT,
+            RESPONSE_CODE.NOT_ACCEPTABLE
+          )
         );
       }
       // Generate salt and hash the password

@@ -6,9 +6,9 @@ import CartModel from "../models/Cart.js";
 
 class ProductCartController {
   static addProductToCart = async (req, res, next) => {
-  
-    
-    const { userId, productId, quantity } = req.body;
+
+
+    const { userId, productId, quantity=1 } = req.body;
     try {
       const product = await ProductModel.findById(productId);
       if (!product) {
@@ -21,7 +21,7 @@ class ProductCartController {
       }
       let cart = await CartModel.findOne({ user: userId });
       console.log(cart + "--------->");
-      
+
       if (!cart) {
         cart = new CartModel({
           user: userId,
@@ -36,7 +36,7 @@ class ProductCartController {
           cart.products.push({ product: productId, quantity: quantity || 1 });
         }
         cart.totalPrice += product.productPrice * (quantity || 1);
-      } 
+      }
       await cart.save();
       return sendResponse(
         res,

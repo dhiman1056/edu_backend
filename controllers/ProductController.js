@@ -10,8 +10,8 @@ class ProductController{
         try{
             const { productName, productPrice } = req.body;
             const newProduct = new ProductModel({
-                productName,
-                productPrice
+                name,
+                price
             });
             const savedProduct = await newProduct.save();
             return sendResponse(
@@ -25,9 +25,9 @@ class ProductController{
     }
     static getAllProducts = async(req,res,next)=>{
         try{
-            const products = await ProductModel.find();
-            console.log(products);
-            return sendResponse(res,RESPONSE_CODE.OK,MESSAGES.PRODUCT_FETCH_SUCCESS,{products})
+            const { type="GENERAL" } = req.query;
+            const products = await ProductModel.find({type});
+            return sendResponse(res,RESPONSE_CODE.OK,null,{products})
         }catch(error){
             next(error);
         }

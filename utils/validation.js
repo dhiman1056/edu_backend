@@ -5,10 +5,10 @@ export const validateUsername = (username) => {
 };
 export const validateNestedFields = (data, requiredFields, parentKey = '') => {
     const errors = {};
-  
+
     for (const key in requiredFields) {
       const field = requiredFields[key];
-  
+
       if (typeof field === 'object' && field.required === undefined) {
         // If it's a nested object, recursively validate
         const nestedErrors = validateNestedFields(data[key] || {}, field, `${parentKey}${key}.`);
@@ -30,4 +30,3 @@ export const validateNestedFields = (data, requiredFields, parentKey = '') => {
     }
     return errors;
   };
-  

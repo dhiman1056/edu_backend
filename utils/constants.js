@@ -5,7 +5,7 @@ export const SUCCESS_CODE = 201;
 export const RESPONSE_CODE = {
   // Success
   OK: 200,
- 
+
   // Client Error
   UNAUTHORIZED: 401,
   UNPROCESSABLE_ENTITY: 422,
@@ -25,6 +25,7 @@ export const MESSAGES = {
   USER_NOT_REGISTERED: "You are not registered",
   INVALID_CREDENTIALS: "Invalid username or password",
   AUTH_SUCCESS: "Authentication successful!",
+  UNAUTHORIZED: "Authorization required, please login.", //
   PASSWORD_UPDATE_SUCCESS: "Password updated successfully.",
   PASSWORD_UPDATE_ERROR: "An error occurred while changing the password",
   USER_REGISTER_SUCCESS: "Registered successfully",
