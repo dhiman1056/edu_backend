@@ -1,8 +1,19 @@
 import express from "express";
-const router = express.Router();
 import ProductController from "../controllers/ProductController.js";
+import { isAuthenticated } from "../middlewares/authMiddleware.js"; // Make sure to import both middleware
 
-router.post("/create", ProductController.createProduct);
-router.get("/getAllProducts", ProductController.getAllProducts);
+const router = express.Router();
+
+// Apply the isAuthenticated middleware to all routes in this router
+router.use(isAuthenticated);
+
+// Administrate Routes
+router.post("/createOne", ProductController.createOne);
+router.post("/updateOne", ProductController.updateOne);
+router.get("/editOne", ProductController.editOne);
+router.get("/fetchAll", ProductController.fetchAll);
+
+// Private Routes (accessible to authenticated users)
+router.get("/showCase", ProductController.showCase);
 
 export default router;

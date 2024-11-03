@@ -17,6 +17,9 @@ export const RESPONSE_CODE = {
   INTERNAL_SERVER_ERROR: 500,
 };
 export const MESSAGES = {
+  NOT_FOUND: "Oops!! not found",
+
+  // Not used
   REQUIRED_FIELDS: "All fields are required.",
   PASSWORD_MISMATCH: "The password and confirm password do not match.",
   EMAIL_EXISTS: "An account with this email already exists.",

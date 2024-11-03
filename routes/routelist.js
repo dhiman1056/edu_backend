@@ -10,7 +10,7 @@ const routelist = [
   { path: "/api/auth", route: authRoute },
   { path: "/api/org", route: orgRoutes },
   { path: "/api/profile", route: profileRoutes },
-  { path: "/api/product", route: productRoutes },
+  { path: "/api/products", route: productRoutes },
   { path: "/api/cart", route: productCartRoutes },
   { path: "/api/order", route: orderRoutes },
 ];

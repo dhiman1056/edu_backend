@@ -1,9 +1,8 @@
 import jwt from "jsonwebtoken";
-import {
-  RESPONSE_CODE,
-} from "../utils/constants.js";
+import { RESPONSE_CODE } from "../utils/constants.js";
 
-const validateToken = (req, res, next) => {
+// Middleware to check if the user is authenticated (for private routes)
+export const isAuthenticated = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (authHeader) {
     const token = authHeader.split(" ")[1];
@@ -23,4 +22,16 @@ const validateToken = (req, res, next) => {
   }
 };
 
-export default validateToken;
+// Middleware to check if the user is an ADMINISTRATE
+export const isAdministrate = (req, res, next) => {
+  if (!req.user || req.user.role !== "ADMINISTRATE") {
+    return res.status(403).json({ message: "Forbidden: ADMINISTRATE only" });
+  }
+  next();
+};
+
+// Middleware for public access (you might not need this if routes are public by default)
+export const isPublic = (req, res, next) => {
+  // No checks needed for public routes
+  next();
+};

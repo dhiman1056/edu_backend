@@ -2,7 +2,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import connectDB from "./configs/connectdb.js";
-import { swaggerDocs, swaggerUi } from "./configs/swagger.js";
 import errorHandler from "./errorhandlers/errorHandler.js";
 import routelist from "./routes/routelist.js";
 
@@ -21,14 +20,10 @@ connectDB(DATABASE_URL);
 
 routelist.forEach(({ path, route }) => app.use(path, route));
 
-// Swagger documentation
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
 // Error handler (should be the last middleware)
 app.use(errorHandler);
 
 // Start the server
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
-  console.log(`Swagger Docs available at http://localhost:${port}/api-docs`);
 });
