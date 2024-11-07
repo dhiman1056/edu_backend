@@ -11,6 +11,11 @@ const productSchema = new mongoose.Schema({
     required: [true, "Please enter uuid"],
     trim: true,
   },
+  type: {
+    type: String,
+    required: [true, "Please enter product type"],
+    trim: true,
+  },
   currency: {
     type: String,
     required: [true, "Please enter currency"],

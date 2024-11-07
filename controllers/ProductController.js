@@ -6,23 +6,33 @@ import HandleCustomError from "../errorhandlers/handleCustomError.js";
 class ProductController {
   static createOne = async (req, res, next) => {
     try {
-      const { name, price, currency, uuid } = req.body;
+      const { name, price, currency, uuid, type } = req.body;
+
+      // Create a new product instance
       const newProduct = new ProductModel({
         name,
         price,
         currency,
         uuid,
+        type, // Include type in the product model
       });
+
+      // Save the product to the database
       const savedProduct = await newProduct.save();
+
       return sendResponse(
         res,
         RESPONSE_CODE.OK,
-        MESSAGES.PRODUCT_CREATED_SUCCESS
+        MESSAGES.PRODUCT_CREATED_SUCCESS,
+        { product: savedProduct } // Return the created product details
       );
     } catch (error) {
+      // Log the error for debugging
+      console.error("Error creating product:", error);
       next(error);
     }
   };
+
   static editOne = async (req, res, next) => {
     try {
       const { productId } = req.query; // Extract productId from query parameters
@@ -115,9 +125,39 @@ class ProductController {
 
   static showCase = async (req, res, next) => {
     try {
-      const { type = "GENERAL" } = req.query;
-      const products = await ProductModel.find({ type });
-      return sendResponse(res, RESPONSE_CODE.OK, null, { products });
+      const { type = "GENERAL", page = 1, limit = 10 } = req.query; // Get type, page, and limit from query parameters
+      const skip = (page - 1) * limit; // Calculate how many records to skip
+
+      // Ensure limit is within a reasonable range
+      const maxLimit = 100; // Set a maximum limit to prevent excessive loading
+      const validLimit = Math.min(parseInt(limit, 10) || 10, maxLimit);
+
+      // Fetch products with pagination
+      const products = await ProductModel.find({ type })
+        .skip(skip)
+        .limit(validLimit);
+
+      // Get total count of products for pagination
+      const totalCount = await ProductModel.countDocuments({ type });
+
+      // Calculate total pages
+      const totalPages = Math.ceil(totalCount / validLimit);
+
+      // Build the next page URL if applicable
+      const nextPage = page < totalPages ? parseInt(page, 10) + 1 : null;
+      const nextPageUrl = nextPage
+        ? `${req.baseUrl}?type=${type}&page=${nextPage}&limit=${validLimit}`
+        : null;
+
+      return sendResponse(res, RESPONSE_CODE.OK, null, {
+        data: products,
+        info: {
+          totalCount,
+          currentPage: parseInt(page, 10),
+          totalPages,
+          next_page_url: nextPageUrl,
+        },
+      });
     } catch (error) {
       next(error);
     }
