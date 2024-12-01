@@ -44,7 +44,7 @@ class AuthController {
 
   static authCheck = async (req, res, next) => {
     try {
-      const user = await UserModel.findById(req.user).select(
+      const user = await UserModel.findById(req.userId).select(
         "-password -gender -dateOfBirth -tc -createdAt"
       );
 

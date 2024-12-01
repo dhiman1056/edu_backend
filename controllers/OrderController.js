@@ -11,7 +11,7 @@ class OrderController{
                 return res.status(400).json({ message: "Cart is empty" });
             }
             const order = new OrderModel({
-                user: req.user,
+                user: req.userId,
                 products: cart.products,
                 totalPrice: cart.totalPrice,
                 status: 'pending',

@@ -7,7 +7,7 @@ class ProfileController {
   static updateProfile = async (req, res, next) => {
     try {
       const { fullname, email } = req.body;
-      const userId = req.user;
+      const userId = req.userId;
       const user = await UserModel.findById(userId);
 
       if (!user) {
@@ -35,7 +35,7 @@ class ProfileController {
     }
   };
   static deleteProfile = async (req, res) => {
-    const userId = req.user;
+    const userId = req.userId;
     const user = await UserModel.findById(userId);
     if (!user) {
       return next(

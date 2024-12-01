@@ -1,34 +1,31 @@
 import mongoose from "mongoose";
-const productCartSchema = new mongoose.Schema({
+
+// Cart Item sub-schema to represent a product in the cart
+const cartItemSchema = new mongoose.Schema({
   product: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "product",
+    ref: 'products',  // Change to match the registered model name
     required: true,
-  },
-  quantity: {
-    type: Number,
-    required: true,
-    min: [1, "Quantity must be at least 1"],
-    default: 1,
-  },
+  }
 });
 
+// Cart Schema
 const cartSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: 'User',  // Reference to the User model
     required: true,
   },
-  products: [productCartSchema], // Array of products with quantity
-  totalPrice: {
+  organization: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Organization',  // Reference to the Organization model
+    required: true,
+  },
+  products: [cartItemSchema],  // List of products in the cart
+  totalAmount: {
     type: Number,
-    required: true,
     default: 0,
-  },
-  status: {
-    type: String,
-    enum: ['active', 'purchased', 'canceled'],
-    default: 'active'
+    required: true,
   },
   createdAt: {
     type: Date,
@@ -37,18 +34,14 @@ const cartSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now,
-  },
-});
-// Mongoose middleware
-cartSchema.pre('save', async function (next) { //Pre-save Hook:
-  let total = 0;
-  for (const item of this.products) {
-      const product = await mongoose.model('product').findById(item.product);
-      total += product.productPrice * item.quantity;
   }
-  this.totalPrice = total;
-  next();
-})
+});
 
-const CartModel = mongoose.model("cart", cartSchema);
+// Middleware to update totalAmount before saving the cart
+cartSchema.pre('save', function(next) {
+  this.totalAmount = this.products.reduce((total, item) => total + item.price, 0);
+  next();
+});
+
+const CartModel = mongoose.model("Cart", cartSchema);
 export default CartModel;

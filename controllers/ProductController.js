@@ -1,7 +1,7 @@
+import HandleCustomError from "../errorhandlers/handleCustomError.js";
 import ProductModel from "../models/Product.js";
 import { MESSAGES, RESPONSE_CODE } from "../utils/constants.js";
 import { sendResponse } from "../utils/responseHelper.js";
-import HandleCustomError from "../errorhandlers/handleCustomError.js";
 
 class ProductController {
   static createOne = async (req, res, next) => {

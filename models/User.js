@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 import { ROLES_ENUM } from "../utils/enum.js";
 import { validateUsername } from "../utils/validation.js";
 
-const organizationSchema = new mongoose.Schema({
-  org_id: {
+const workspaceSchema = new mongoose.Schema({
+  workspaceId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Organization",
+    ref: "workspaces",
     required: true,
   },
   role: {
@@ -13,6 +13,18 @@ const organizationSchema = new mongoose.Schema({
     required: true,
     enum: ROLES_ENUM.arr,
     default: "member",
+  },
+  status: {
+    type: String,
+    default: 0,
+  },
+  assignDt: {
+    type: Date,
+    default: Date.now,
+  },
+  updateDt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
@@ -76,7 +88,7 @@ const userSchema = new mongoose.Schema({
   deletedAt: {
     type: Date,
   },
-  organizations: [organizationSchema],
+  workspaces: [workspaceSchema],
 });
 
 const UserModel = mongoose.model("User", userSchema);
